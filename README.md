@@ -117,8 +117,8 @@ The web interface features 4 pre-configured enterprise threat scenarios:
 ### Installation
 ```bash
 # 1. Clone repository
-git clone https://github.com/your-username/aegisagent-control-plane.git
-cd aegisagent-control-plane
+git clone https://github.com/SriRamkunamsetty/WeAreDevelopers-Hackathon.git
+cd WeAreDevelopers-Hackathon
 
 # 2. Install dependencies
 npm install
