@@ -8,14 +8,17 @@ import { ScenarioSelector } from "@/components/scenarios/scenario-selector";
 import { PriGauge } from "@/components/dashboard/pri-gauge";
 import { CodeDiffViewer } from "@/components/code-viewer/code-diff-viewer";
 import { AgentTrajectoryViewer } from "@/components/dashboard/agent-trajectory-viewer";
+import { InteractiveSandboxTerminal } from "@/components/terminal/interactive-sandbox-terminal";
+import { ByokGatewayModal } from "@/components/live-agent/byok-gateway-modal";
 import { scanCodeForVulnerabilities } from "@/lib/ast-scanner/cwe-scanner";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { Sparkles, ArrowRight, Terminal, Cpu, GitPullRequest } from "lucide-react";
 import Link from "next/link";
 
 export default function DashboardPage() {
   const [activeScenario, setActiveScenario] = useState<DemoScenario>(DEMO_SCENARIOS[0]!);
   const [isRemediated, setIsRemediated] = useState<boolean>(true);
   const [activeScanResult, setActiveScanResult] = useState<ScanResult>(activeScenario.scanResult);
+  const [isByokOpen, setIsByokOpen] = useState<boolean>(false);
 
   const handleSelectScenario = (scenario: DemoScenario) => {
     setActiveScenario(scenario);
@@ -70,19 +73,38 @@ export default function DashboardPage() {
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
+            {/* Top Quick Actions */}
+            <div className="flex flex-wrap items-center gap-2.5">
+              <button
+                onClick={() => setIsByokOpen(true)}
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-emerald-500/20"
+              >
+                <Sparkles className="h-4 w-4" />
+                <span>Test Live BYOK Agent</span>
+              </button>
+
+              <Link
+                href="/mcp"
+                className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/90 px-3.5 py-2.5 text-xs sm:text-sm font-bold text-slate-200 hover:bg-slate-800 transition-all"
+              >
+                <Cpu className="h-4 w-4 text-emerald-400" />
+                <span>MCP Gateway</span>
+              </Link>
+
+              <Link
+                href="/pull-request"
+                className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/90 px-3.5 py-2.5 text-xs sm:text-sm font-bold text-slate-200 hover:bg-slate-800 transition-all"
+              >
+                <GitPullRequest className="h-4 w-4 text-teal-400" />
+                <span>PR Bot Demo</span>
+              </Link>
+
               <Link
                 href="/pitch"
-                className="flex items-center gap-2 rounded-xl bg-[#00E599] px-5 py-3 text-xs sm:text-sm font-bold text-slate-950 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20"
+                className="flex items-center gap-2 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3.5 py-2.5 text-xs sm:text-sm font-bold text-amber-300 hover:bg-amber-500/20 transition-all"
               >
-                <span>Explore Judge Pitch & TAM</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/evals"
-                className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-xs sm:text-sm font-bold text-slate-200 hover:bg-slate-800 transition-all"
-              >
-                <span>Continuous Evals Suite</span>
+                <span>Judge Pitch</span>
+                <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
           </div>
@@ -90,7 +112,7 @@ export default function DashboardPage() {
       </section>
 
       {/* Main Dashboard Grid */}
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 pt-8 space-y-6">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 pt-8 space-y-8">
         {/* Top Stat Cards */}
         <StatCards />
 
@@ -115,12 +137,31 @@ export default function DashboardPage() {
           onRunCustomScan={handleRunCustomScan}
         />
 
+        {/* Interactive Kernel Sandbox Terminal */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Terminal className="h-5 w-5 text-[#00E599]" />
+              <h2 className="text-lg font-bold text-white tracking-tight">
+                Live Agent eBPF / Sandbox Firewall Terminal
+              </h2>
+            </div>
+            <span className="text-xs font-mono text-slate-400">
+              POSIX Interceptor & Network ACL
+            </span>
+          </div>
+          <InteractiveSandboxTerminal />
+        </div>
+
         {/* Agent Trajectory & Timeline Telemetry */}
         <AgentTrajectoryViewer
           steps={activeScenario.trajectory}
           agentName={activeScenario.simulatedAgent}
         />
       </main>
+
+      {/* BYOK Live Gateway Modal */}
+      <ByokGatewayModal isOpen={isByokOpen} onClose={() => setIsByokOpen(false)} />
     </div>
   );
 }

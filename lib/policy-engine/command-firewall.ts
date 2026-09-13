@@ -58,6 +58,13 @@ const DANGEROUS_COMMAND_RULES: readonly DangerousPattern[] = [
     severity: "HIGH",
     description: "Tunneling local ports through public proxies bypasses enterprise security perimeters.",
   },
+  {
+    id: "AEGIS-CMD-008",
+    name: "Unauthorized Cloud Bucket Exfiltration",
+    regex: /(?:aws\s+s3\s+sync|gsutil\s+-m\s+cp|rclone\s+sync|s3cmd\s+sync)\s+[^\n|&;]+\s+(?:s3:\/\/|gs:\/\/|b2:\/\/)/i,
+    severity: "CRITICAL",
+    description: "Unauthorized bulk exfiltration of local project assets or environment files to external cloud storage.",
+  },
 ];
 
 /**
